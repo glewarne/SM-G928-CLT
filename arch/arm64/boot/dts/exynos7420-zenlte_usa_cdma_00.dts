@@ -1,7 +1,7 @@
 /*
  * SAMSUNG UNIVERSAL7420 board device tree source
  *
- * Copyright (c) 2015 Samsung Electronics Co., Ltd.
+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
  *		http://www.samsung.com
  *
  * This program is free software; you can redistribute it and/or modify
@@ -11,47 +11,23 @@
 
 /dts-v1/;
 #include "exynos7420-zenlte_common.dtsi"
-#include "exynos7420-zenlte_eur_battery_09.dtsi"
-#include "exynos7420-zenlte_gpio_kor_09.dtsi"
-#include "exynos7420-zenlte_modem-shannon_kor.dtsi"
-#include "exynos7420-zenlte_fingerprint-sensor_04.dtsi"
+#include "exynos7420-zenlte_eur_battery_00.dtsi"
+#include "exynos7420-zenlte_gpio_usa_cdma_00.dtsi"
+#include "exynos7420-zenlte_modem-mdm9x35.dtsi"
+#include "exynos7420-zenlte_fingerprint-sensor_00.dtsi"
 #include "exynos7420-zenlte_motor.dtsi"
 #include "exynos7420-zenlte_svcled.dtsi"
 #include "exynos7420-zenlte_mst.dtsi"
-#include "exynos7420-zenlte_kor-tdmb-00.dtsi"
-#include "exynos7420-zenlte_display_03.dtsi"
+#include "exynos7420-zenlte_display_00.dtsi"
 
 / {
-	model = "Samsung ZEN LTE KOR rev0.6 board based on Exynos7420(EVT1), mPOP";
+	model = "Samsung ZEN LTE CDMA Bringup board based on Exynos7420(EVT1), mPOP";
 	model_info-chip = <7420>;
 	model_info-platform = "android";
 	model_info-subtype = "samsung";
-	model_info-hw_rev = <9>;
-	model_info-hw_rev_end = <255>;
-	compatible = "samsung,ZEN LTE KOR, rev0.6", "samsung,exynos7420";
-
-	sound {
-		samsung,audio-routing =
-				"HP", "HPOUT1L",
-				"HP", "HPOUT1R",
-				"SPK", "HiFi Playback",
-				"RCV", "HPOUT3L",
-				"RCV", "HPOUT3R",
-				"Main Mic", "MICBIAS1",
-				"IN1AL", "Main Mic",
-				"Headset Mic", "MICBIAS2",
-				"IN2BL", "Headset Mic",
-				"Sub Mic", "MICBIAS3",
-				"IN3L", "Sub Mic",
-				"Third Mic", "MICBIAS4",
-				"IN4L", "Third Mic",
-				"HiFi Capture", "VI SENSING",
-				"IN3L", "FM In",
-				"IN3R", "FM In";
-
-		pinctrl-names = "default";
-		pinctrl-0 = <&audio_clk_sel>;
-	};
+	model_info-hw_rev = <0>;
+	model_info-hw_rev_end = <0>;
+	compatible = "samsung,ZEN LTE CDMA ,Bringup00", "samsung,exynos7420";
 
 	spi_0: spi@14d20000 {
 		/delete-property/ dma-mode;
@@ -89,7 +65,7 @@
 			wlf,hpdet-moisture-debounce = <40>;
 			wlf,hpdet-channel = <1>;
 			wlf,hpdet-ext-res = <33>;
-			wlf,hpdet-short-circuit-imp = <3>;
+			wlf,hpdet-short-circuit-imp = <0>;
 			wlf,micd-ranges = <
 				116 226
 				173 582
@@ -157,9 +133,9 @@
 
 			wlf,max-channels-clocked = <2 0 0 0>;
 			/* 0:MICVDD 1:MICBIAS1 2:MICBIAS2 3:MICBIAS3 */
-			wlf,dmic-ref = <1 2 3 0 0 0>;
+			wlf,dmic-ref = <1 2 1 0 0 0>;
 			/* 1st cell:IN1L 2rd cell:IN1R 3nd cell:IN2L 4th cell:IN2R... 12th cell:IN6R */
-			wlf,inmode = <2 2 0 0 2 2 2 2 0 0 0 0>;
+			wlf,inmode = <2 2 1 1 2 2 2 2 0 0 0 0>;
 			/* 1st cell:OUT1 2nd cell:OUT2 3rd cell:OUT3... 6th cell:OUT6 */
 			wlf,out-mono = <0 1 1 0 0 0>;
 
@@ -290,42 +266,44 @@
 		#size-cells = <0>;
 
 		pinctrl-names = "default";
-		pinctrl-0 = <&spi1_mosi_sck_ssn &spi1_miso &ssp_host_req02>;
+		pinctrl-0 = <&spi1_mosi_sck_ssn &spi1_miso>;
 
 		num-cs = <1>;
 		status = "okay";
 
-		BCM4773@0 {
-			compatible = "ssp,BCM4773";
+		STM32F@0 {
+			compatible = "ssp,STM32F";
 			reg = <0>;
-			spi-max-frequency = <26000000>;
+			spi-max-frequency = <5000000>;
 			spi-cpol;
 			spi-cpha;
 			pinctrl-names = "default";
-			pinctrl-0 = <&ssp_mcu_req &ssp_mcu_resp>;
+			pinctrl-0 = <&ssp_rst &ssp_ap_int &ssp_mcu_int1 &ssp_mcu_int2>;
 
 			gpio-controller;
 			#gpio-cells = <2>;
-			ssp-host-req = <&gpa3 4 0x01>;
-			ssp-mcu-req = <&gpf4 5 0x01>;
-			ssp-mcu-resp = <&gpf4 4 0x00>;
-			ssp-acc-position = <1>;
-			ssp-mag-position = <7>;
-			ssp-sns-combination = <0>;
+			ssp,mcu_int1-gpio = <&gpa2 7 0x00>;
+			ssp,mcu_int2-gpio = <&gpf4 4 0x00>;
+			ssp,ap_int-gpio = <&gpf4 5 0x01>;
+			ssp,rst-gpio = <&gpa3 6 0x01>;
+			ssp,acc-position = <0>;
+			ssp,mag-position = <7>;
 			ssp,prox-hi_thresh = <2000>;
 			ssp,prox-low_thresh = <1400>;
-			ssp-ap-rev = <1>;
-			ssp-mag-array = <9896 606 (-132) 873 9385 17 (-438) 628 10687>; /* Only for YAS532 */
-			ssp-hw-rev = <3>;
 			ssp-glass-type = <1>;
+			ssp-acc-type = <2>;
+			ssp,mag-array = /bits/ 8 <120 88 105 111 98 225 1 139 211 53
+						186 36 1 179 2 179 251 181 46 211
+						190 0 61 186 13 5 174>;
 
 			controller-data {
 				cs-gpio = <&gpd6 3 0>;
 				samsung,spi-feedback-delay = <0>;
-				};
 			};
+		};
 	};
 
+/*
 	gps {
 		compatible = "samsung,exynos54xx-bcm4753";
 
@@ -337,7 +315,7 @@
 				>;
 		status = "okay";
 	};
-
+*/
 	spi_3: spi@14d50000 {
 		spiclk-pindev-name = "14c90000.pinctrl";
 		spiclk-pin-name = "gpg4-0";
@@ -379,14 +357,17 @@
 		imp_table = <
 			/* min      max gain */
 			   0         13    0
-			  14         42    0
+			  14         42    3
 			  43        100    6
-			 101        200   12
-			 201        450   15
-			 451       1000   15
-			1001 0x7fffffff   15
+			 101        200    9
+			 201        450   11
+			 451       1000   11
+			1001 0x7fffffff    6
 		>;
 
+		aif_format = <0x1001 0x4001 0x1001>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&audio_clk_sel>;
 		clk_sel_gpio = <&gpf5 6 0>;
 		seamless_voicewakeup;
 		status = "okay";
@@ -413,6 +394,18 @@
 			samsung,pin-con-pdn =<2>;
 			samsung,pin-pud-pdn = <0>;
 		};
+		ssp_mcu_int1: ssp-mcu-int1 {
+			samsung,pins = "gpa2-7";
+			samsung,pin-function = <0>;
+			samsung,pin-pud = <0>;
+			samsung,pin-drv = <0>;
+		};
+		ssp_rst: ssp-rst {
+			samsung,pins = "gpa3-6";
+			samsung,pin-function = <1>;
+			samsung,pin-pud = <3>;
+			samsung,pin-drv = <3>;
+		};
 		/* touchkey */
 		sub_det: sub-det {
 			samsung,pins = "gpa3-0";
@@ -420,39 +413,64 @@
 			samsung,pin-pud = <0>;
 			samsung,pin-drv = <0>;
 		};
-		pcie1_eint: pcie1_eint {
-			samsung,pins = "gpa3-5";
+		/* touchkey interrupt*/
+		cfg_irq: cfg-irq {
+			samsung,pins = "gpa0-0";
 			samsung,pin-function = <0xf>;
-			samsung,pin-pud = <0>;
-			samsung,pin-con-pdn = <3>;
-			samsung,pin-pud-pdn = <0>;
-		};
-		acokb_irq: acokb-irq {
-			samsung,pins = "gpa1-7";
-			samsung,pin-function = <0>;
-			samsung,pin-pud = <0>;
+			samsung,pin-pud = <3>;
 			samsung,pin-drv = <0>;
 		};
-	};
-
-	detectcable {
-		status = "okay";
-		compatible = "detectcable";
-		pinctrl-names = "default";
-		pinctrl-0 = <&acokb_irq>;
-		acokb,gpio_detectcable = <&gpa1 7 0>;
-		acokb,wakeup = <1>;
+		cfg_input: cfg-input {
+			samsung,pins = "gpa0-0";
+			samsung,pin-function = <0>;
+			samsung,pin-pud = <1>;
+			samsung,pin-drv = <0>;
+		};
+		grip_irq: grip-irq {
+			samsung,pins = "gpa2-6";
+			samsung,pin-function = <0xf>;
+			samsung,pin-pud = <0>;
+			samsung,pin-drv = <3>;
+		};
+		grip_ldo: grip-ldo {
+			samsung,pins = "gpr1-5";
+			samsung,pin-function = <0xf>;
+			samsung,pin-pud = <0>;
+			samsung,pin-drv = <3>;
+		};
 	};
 
 	pinctrl@13470000 {
+		es704_wakeup: es704-wakeup {
+			samsung,pins ="gpd0-1";
+			samsung,pin-function = <1>;
+			samsung,pin-pud = <3>;
+			samsung,pin-con-pdn =<3>;
+			samsung,pin-pud-pdn = <3>;
+			samsung,pin-val = <1>;
+		};
 		max98505_i2c: max98505-i2c {
 			samsung,pins = "gpd2-0", "gpd2-1";
 			samsung,pin-pud = <0>;
 			status = "okay";
 		};
+		es704_i2c: es704-i2c {
+			samsung,pins = "gpd0-3", "gpd0-2";
+			samsung,pin-function = <0x3>;
+			samsung,pin-pud = <0x0>;
+			samsung,pin-drv = <0>;
+		};
 	};
 
 	pinctrl@14870000 {
+		es704_reset: es704-reset {
+			samsung,pins ="gpf1-0";
+			samsung,pin-function = <1>;
+			samsung,pin-pud = <0>;
+			samsung,pin-con-pdn =<3>;
+			samsung,pin-pud-pdn = <0>;
+			samsung,pin-val = <0>;
+		}; 
 		codec_reset: codec-reset {
 			samsung,pins ="gpf4-0";
 			samsung,pin-function = <1>;
@@ -469,6 +487,18 @@
 			samsung,pin-pud-pdn = <1>;
 			samsung,pin-val = <0>;
 		};
+		ssp_mcu_int2: ssp-mcu-int2 {
+			samsung,pins = "gpf4-4";
+			samsung,pin-function = <0>;
+			samsung,pin-pud = <0>;
+			samsung,pin-drv = <0>;
+		};
+		ssp_ap_int: ssp-ap-int {
+			samsung,pins = "gpf4-5";
+			samsung,pin-function = <1>;
+			samsung,pin-pud = <3>;
+			samsung,pin-drv = <3>;
+		};
 	};
 
 	pinctrl@15690000 {
@@ -483,14 +513,21 @@
                         samsung,pin-function = <1>;
                         samsung,pin-pud = <0>;
                         samsung,pin-val = <0>;
-                };
+                };		
+		acokb_irq: acokb-irq {
+			samsung,pins = "gpr1-2";
+			samsung,pin-function = <0>;
+			samsung,pin-pud = <0>;
+			samsung,pin-drv = <0>;
+		};
 	};
 
-	pcie1@157B0000 {
-		gpios = <&gpg2 0 0x1 /* PERST */>,
-			<&gpa3 5 0x1 /* EINT */>;
-		pinctrl-0 = <&pcie1_clkreq &pcie1_perst &pcie_wake &pcie1_reset_clear &cfg_wlanen &wlan_host_wake &pcie1_eint>;
-		pinctrl-1 = <&pcie1_clkreq &pcie1_perst &pcie_wake &pcie1_reset &cfg_wlanen &wlan_host_wake &pcie1_eint>;
+	detectcable {
+		status = "okay";
+		compatible = "detectcable";
+		pinctrl-names = "default";
+		pinctrl-0 = <&acokb_irq>;
+		acokb,gpio_detectcable = <&gpr1 2 0>;
 	};
 
 	hsi2c@13640000 {
@@ -657,12 +694,15 @@
 					regulator-name = "vtouch_3.3v";
 					regulator-min-microvolt = <3300000>;
 					regulator-max-microvolt = <3300000>;
+					regulator-boot-on;
 				};
 
 				ldo22_reg: LDO22 {
-					regulator-name = "VDD22_1P2_AP";
-					regulator-min-microvolt = <1200000>;
-					regulator-max-microvolt = <1200000>;
+					regulator-name = "VDD22_1P1_2MIC";
+					regulator-min-microvolt = <1100000>;
+					regulator-max-microvolt = <1100000>;
+					regulator-always-on;
+					regulator-initial-mode = <3>;
 				};
 
 				ldo23_reg: LDO23 {
@@ -693,39 +733,8 @@
 	};
 
 	hsi2c@13670000 {
-		status = "okay";
-		sec-nfc@27 {
-			compatible = "sec-nfc";
-			reg = <0x27>;
-
-			interrupts = <6 0 0>;
-			interrupt-parent = <&gpa0>;
-
-			sec-nfc,ven-gpio = <&gpf1 5 0>;
-			sec-nfc,irq-gpio = <&gpa0 6 0>;
-			sec-nfc,firm-gpio = <&gpf5 4 0>;
-			sec-nfc,clk_req-gpio = <&gpa2 6 0xf>;
-			sec-nfc,clk_use = <2>;
-			sec-nfc,i2c_1p8 = "VDD20_1P8_AP";
-			pinctrl-names = "default";
-			pinctrl-0 = <&nfc_n5_en &nfc_n5_firm>;
-			clock-names = "sclk_isp_sensor1",
-				"mout_sclk_isp_sensor1",
-				"dout_sclk_isp_sensor1_a",
-				"dout_sclk_isp_sensor1_b",
-				"gate_top_cam1";
-			clocks = <&clock 34>,
-				<&clock 3067>,
-				<&clock 4092>,
-				<&clock 4093>,
-				<&clock 2780>;
-		};
-	};
-
-	hsi2c@13680000 {
-		status = "okay";
-
 		s2mpb02@59 {
+		status = "okay";
 			compatible = "samsung,s2mpb02";
 			reg = <0x59>;
 
@@ -837,22 +846,15 @@
 				};
 
 				_ldo16_reg: s2mpb02-ldo16 {
-					regulator-name = "vtouch_2.8v";
-					regulator-min-microvolt = <2800000>;
-					regulator-max-microvolt = <2800000>;
-					regulator-boot-on;
+					regulator-name = "VCC_3.0V_LCD";
+					regulator-min-microvolt = <3000000>;
+					regulator-max-microvolt = <3000000>;
 				};
 
 				_ldo17_reg: s2mpb02-ldo17 {
 					regulator-name = "tsp_avdd";
 					regulator-min-microvolt = <3300000>;
 					regulator-max-microvolt = <3300000>;
-				};
-
-				_ldo18_reg: s2mpb02-ldo18 {
-					regulator-name = "ldo18_3.0V";
-					regulator-min-microvolt = <3000000>;
-					regulator-max-microvolt = <3000000>;
 				};
 			};
 
@@ -879,29 +881,94 @@
 				};
 			};
 		};
-	};
+		};
 
-	sub_ldo_18_en {
-		compatible = "regulator-fixed";
-		regulator-name = "VCC_3.0V_LCD";
-		regulator-min-microvolt = <3000000>;
-		regulator-max-microvolt = <3000000>;
-		gpio = <&gpd1 4 0>;
-		enable-active-high;
-		regulator-boot-on;
+
+	hsi2c@13680000 {
+		status = "disabled";
+		/delete-node/	s2mpb02@59;
 	};
 
 	hsi2c@13690000 {
-		status = "okay";
-
-		/delete-node/ max77838@60;
+		status = "disabled";
+		/delete-node/	max77838@60;
+		/delete-node/	max86900@51;
 	};
 
-	/delete-node/ i2c@28;
+	hsi2c@14E60000 {
+		status = "okay";
+		samsung,hs-mode;
+		clock-frequency = <1000000>;
+		earSmart@3e {
+			compatible = "earSmart";
+			reg = <0x3e>;
+			clocks = <&clock 45>;
+			clock-names = "mclk";
+			pinctrl-0 = <&es704_i2c &es704_reset &es704_wakeup>;
+			esxxx-reset-gpio = <&gpf1 0 0>;
+			esxxx-wakeup-gpio  = <&gpd0 1 0>;
+			adnc,firmware_name = "audience-es804-fw.bin";
+			adnc,use_dhwpt;
+		};
+	};
 
-	i2c@20 {
+	serial_0: uart@13630000 {
+		status = "okay";
+		samsung,use-default-irq;
+	};
+
+	i2c@20{
+		compatible = "i2c-gpio";
+		status = "disabled";
+	};
+
+	hsi2c@14E70000 {
+		status = "okay";
+		pinctrl-names = "default","on_i2c","off_i2c";
+		pinctrl-0 = <&hs_i2c3_bus>;
+		pinctrl-1 = <&cfg_i2c>;
+		pinctrl-2 = <&cfg_gpio>;
 		touchkey@20 {
-			abov,sub-det = <&gpa3 0 0>;
+			pinctrl-names = "on_irq","off_irq","sub_det";
+			pinctrl-0 = <&cfg_irq>;
+			pinctrl-1 = <&cfg_input>;
+			pinctrl-2 = <&sub_det>;
+			compatible = "cypress,cypress_touchkey";
+			reg = <0x20>;
+			interrupts = <0 0 0>;
+			interrupt-parent = <&gpa0>;
+			cypress,sda-gpio = <&gpd1 2 0>;
+			cypress,scl-gpio = <&gpd1 3 0>;
+			cypress,irq-gpio = <&gpa0 0 1>;
+			cypress,sub-det = <&gpa3 0 0>;
+			cypress,ap-io-power = "true";
+			cypress,ic-stabilizing-time = <150>;
+			cypress,boot-on-ldo = "true";
+			cypress,fw_path = "cypress/cypress_zerof.fw";
+		};
+	};
+
+	i2c@28 {
+		compatible = "i2c-gpio";
+		gpios = <&gpr1 4 0x0 /*sda*/
+			&gpr1 3 0x0  /*scl*/
+			>;
+		i2c-gpio,delay-us = <2>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&grip_i2c>;
+		status = "ok";
+		sx9310-i2c@28 {
+			compatible = "sx9310-i2c";
+			reg = <0x28>;
+			status = "okay";
+			pinctrl-names = "default";
+			pinctrl-0 = <&grip_irq &grip_ldo>;
+			interrupt-parent = <&gpa3>;
+			interrupts = <4 0 0>;
+			sx9310-i2c,nirq-gpio = <&gpa2 6 0x00>;
+			sx9310-i2c,ldo-en = <&gpr1 5 0x00>;
 		};
 	};
 
@@ -914,7 +981,4 @@
 		vqmmc-supply = <&ldo2_reg>;
 	};
 
-	simslot_count {
-		status = "okay";
-	};
 };

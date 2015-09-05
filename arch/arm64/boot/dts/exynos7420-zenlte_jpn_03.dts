@@ -1,7 +1,7 @@
 /*
  * SAMSUNG UNIVERSAL7420 board device tree source
  *
- * Copyright (c) 2015 Samsung Electronics Co., Ltd.
+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
  *		http://www.samsung.com
  *
  * This program is free software; you can redistribute it and/or modify
@@ -11,24 +11,24 @@
 
 /dts-v1/;
 #include "exynos7420-zenlte_common.dtsi"
-#include "exynos7420-zenlte_eur_battery_09.dtsi"
-#include "exynos7420-zenlte_gpio_kor_09.dtsi"
-#include "exynos7420-zenlte_modem-shannon_kor.dtsi"
-#include "exynos7420-zenlte_fingerprint-sensor_04.dtsi"
+#include "exynos7420-zenlte_eur_battery_03.dtsi"
+#include "exynos7420-zenlte_gpio_jpn_03.dtsi"
+#include "exynos7420-zenlte_modem-shannon_ds.dtsi"
+#include "exynos7420-zenlte_fingerprint-sensor_00.dtsi"
 #include "exynos7420-zenlte_motor.dtsi"
 #include "exynos7420-zenlte_svcled.dtsi"
 #include "exynos7420-zenlte_mst.dtsi"
-#include "exynos7420-zenlte_kor-tdmb-00.dtsi"
 #include "exynos7420-zenlte_display_03.dtsi"
+#include "exynos7420-zenlte_jpn-isdbt-00.dtsi"
 
 / {
-	model = "Samsung ZEN LTE KOR rev0.6 board based on Exynos7420(EVT1), mPOP";
+	model = "Samsung ZEN LTE JPN rev02 board based on Exynos7420(EVT1), mPOP";
 	model_info-chip = <7420>;
 	model_info-platform = "android";
 	model_info-subtype = "samsung";
-	model_info-hw_rev = <9>;
+	model_info-hw_rev = <3>;
 	model_info-hw_rev_end = <255>;
-	compatible = "samsung,ZEN LTE KOR, rev0.6", "samsung,exynos7420";
+	compatible = "samsung,ZEN LTE JPN,rev02", "samsung,exynos7420";
 
 	sound {
 		samsung,audio-routing =
@@ -152,6 +152,10 @@
 
 			wlf,gpsw = <0x3>;
 			wlf,micd-software-compare;
+			wlf,antenna-supported;
+			wlf,antenna-manual-db-plugout = <1>;
+			wlf,antenna-hp-imp-range-lo = <5>;
+			wlf,antenna-hp-imp-range-hi = <5>;
 			wlf,micd-open-circuit-declare = <1>;
 			wlf,jd-wake-time = <5000>;
 
@@ -375,18 +379,6 @@
 
 	audio_pdata {
 		compatible = "samsung,audio-pdata";
-
-		imp_table = <
-			/* min      max gain */
-			   0         13    0
-			  14         42    0
-			  43        100    6
-			 101        200   12
-			 201        450   15
-			 451       1000   15
-			1001 0x7fffffff   15
-		>;
-
 		clk_sel_gpio = <&gpf5 6 0>;
 		seamless_voicewakeup;
 		status = "okay";
@@ -413,13 +405,6 @@
 			samsung,pin-con-pdn =<2>;
 			samsung,pin-pud-pdn = <0>;
 		};
-		/* touchkey */
-		sub_det: sub-det {
-			samsung,pins = "gpa3-0";
-			samsung,pin-function = <0>;
-			samsung,pin-pud = <0>;
-			samsung,pin-drv = <0>;
-		};
 		pcie1_eint: pcie1_eint {
 			samsung,pins = "gpa3-5";
 			samsung,pin-function = <0xf>;
@@ -427,21 +412,26 @@
 			samsung,pin-con-pdn = <3>;
 			samsung,pin-pud-pdn = <0>;
 		};
-		acokb_irq: acokb-irq {
-			samsung,pins = "gpa1-7";
+		/* touchkey */
+		sub_det: sub-det {
+			samsung,pins = "gpa3-0";
 			samsung,pin-function = <0>;
 			samsung,pin-pud = <0>;
 			samsung,pin-drv = <0>;
 		};
-	};
-
-	detectcable {
-		status = "okay";
-		compatible = "detectcable";
-		pinctrl-names = "default";
-		pinctrl-0 = <&acokb_irq>;
-		acokb,gpio_detectcable = <&gpa1 7 0>;
-		acokb,wakeup = <1>;
+		/* touchkey interrupt*/
+		cfg_irq: cfg-irq {
+			samsung,pins = "gpa0-0";
+			samsung,pin-function = <0xf>;
+			samsung,pin-pud = <3>;
+			samsung,pin-drv = <0>;
+		};
+		cfg_input: cfg-input {
+			samsung,pins = "gpa0-0";
+			samsung,pin-function = <0>;
+			samsung,pin-pud = <1>;
+			samsung,pin-drv = <0>;
+		};
 	};
 
 	pinctrl@13470000 {
@@ -477,13 +467,27 @@
 			samsung,pin-function = <0>;
 			samsung,pin-pud = <0>;
 			samsung,pin-drv = <0>;
-		};		
+		};
 		antenna_switch_en: antenna-switch-en {
                         samsung,pins = "gpr3-6";
                         samsung,pin-function = <1>;
                         samsung,pin-pud = <0>;
                         samsung,pin-val = <0>;
                 };
+		acokb_irq: acokb-irq {
+			samsung,pins = "gpr1-2";
+			samsung,pin-function = <0>;
+			samsung,pin-pud = <0>;
+			samsung,pin-drv = <0>;
+		};
+	};
+
+	detectcable {
+		status = "okay";
+		compatible = "detectcable";
+		pinctrl-names = "default";
+		pinctrl-0 = <&acokb_irq>;
+		acokb,gpio_detectcable = <&gpr1 2 0>;
 	};
 
 	pcie1@157B0000 {
@@ -492,7 +496,7 @@
 		pinctrl-0 = <&pcie1_clkreq &pcie1_perst &pcie_wake &pcie1_reset_clear &cfg_wlanen &wlan_host_wake &pcie1_eint>;
 		pinctrl-1 = <&pcie1_clkreq &pcie1_perst &pcie_wake &pcie1_reset &cfg_wlanen &wlan_host_wake &pcie1_eint>;
 	};
-
+	
 	hsi2c@13640000 {
 		status = "okay";
 		max98505@31 {
@@ -892,12 +896,10 @@
 	};
 
 	hsi2c@13690000 {
-		status = "okay";
+		status = "disabled";
 
 		/delete-node/ max77838@60;
 	};
-
-	/delete-node/ i2c@28;
 
 	i2c@20 {
 		touchkey@20 {

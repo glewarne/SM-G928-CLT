@@ -108,13 +108,13 @@
 		battery,wpc_temp_table_data = <700 650 630 600 580 550 500 450 430 400 350
 				300 250 200 150 100 50 0 (-30) (-50) (-100) (-150) (-200)>;
 
-		battery,input_current_limit = <1800 450 450 1800 500 900 1000 460 1000 450 900 1000 900 1900 1800 450 450 400 700 1300 300 1000 1500 450 1675 1000 1675 80 1800 1675 1400 1000 1000>;
+		battery,input_current_limit = <1800 450 450 1800 500 900 1000 460 1000 450 1000 1000 1000 1900 1800 450 450 400 700 1300 300 1000 1500 450 1675 1000 1675 80 1800 1675 1400 1000 1000>;
 		battery,fast_charging_current = <2100 0 0 2100 800 1200 1000 460 1200 0 1400 2100 1400 1600 2100 0 0 400 700 1300 300 1000 1500 0 3000 1000 3000 80 1800 1000 1400 0 1000>;
 		battery,full_check_current_1st = <300 0 0 300 300 300 300 300 300 0 300 300 300 300 300 0 0 300 300 300 300 300 300 0 300 300 300 0 300 300 300 0 300>;
 		battery,full_check_current_2nd = <150 0 0 150 150 150 150 150 150 0 150 150 150 150 150 0 0 150 150 150 150 150 150 0 150 150 150 0 150 150 150 0 150>;
 
 		battery,wireless_cc_cv = <80>;
-		battery,fod_data = <240 (-5) 170 30 170 30 170 30 171 35 180 27>;
+		battery,fod_data = <240 (-5) 170 30 170 30 170 30 171 (-16) 180 (-26)>;
 		battery,inbat_voltage = <1>;
 
 		battery,inbat_voltage_table_adc = <2848 2824 2798 2802 2793 2718 2686 2658 2637 2604 2573 2536 2509 2486 2464 2429 2414 2374 2354 2326 2298>;
@@ -385,7 +385,7 @@
 		battery,siop_hv_input_limit_current = <700>;
 		battery,siop_hv_charging_limit_current = <1000>;
 
-		battery,siop_wireless_input_limit_current = <500>;
+		battery,siop_wireless_input_limit_current = <700>;
 		battery,siop_wireless_charging_limit_current = <600>;
 		battery,siop_hv_wireless_input_limit_current = <500>;
 		battery,siop_hv_wireless_charging_limit_current = <1000>;

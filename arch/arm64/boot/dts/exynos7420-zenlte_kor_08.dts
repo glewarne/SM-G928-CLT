@@ -11,8 +11,8 @@
 
 /dts-v1/;
 #include "exynos7420-zenlte_common.dtsi"
-#include "exynos7420-zenlte_eur_battery_09.dtsi"
-#include "exynos7420-zenlte_gpio_kor_09.dtsi"
+#include "exynos7420-zenlte_eur_battery_08.dtsi"
+#include "exynos7420-zenlte_gpio_kor_08.dtsi"
 #include "exynos7420-zenlte_modem-shannon_kor.dtsi"
 #include "exynos7420-zenlte_fingerprint-sensor_04.dtsi"
 #include "exynos7420-zenlte_motor.dtsi"
@@ -22,13 +22,13 @@
 #include "exynos7420-zenlte_display_03.dtsi"
 
 / {
-	model = "Samsung ZEN LTE KOR rev0.6 board based on Exynos7420(EVT1), mPOP";
+	model = "Samsung ZEN LTE KOR rev0.x board based on Exynos7420(EVT1), mPOP";
 	model_info-chip = <7420>;
 	model_info-platform = "android";
 	model_info-subtype = "samsung";
-	model_info-hw_rev = <9>;
-	model_info-hw_rev_end = <255>;
-	compatible = "samsung,ZEN LTE KOR, rev0.6", "samsung,exynos7420";
+	model_info-hw_rev = <8>;
+	model_info-hw_rev_end = <8>;
+	compatible = "samsung,ZEN LTE KOR, rev0.x", "samsung,exynos7420";
 
 	sound {
 		samsung,audio-routing =
@@ -427,21 +427,6 @@
 			samsung,pin-con-pdn = <3>;
 			samsung,pin-pud-pdn = <0>;
 		};
-		acokb_irq: acokb-irq {
-			samsung,pins = "gpa1-7";
-			samsung,pin-function = <0>;
-			samsung,pin-pud = <0>;
-			samsung,pin-drv = <0>;
-		};
-	};
-
-	detectcable {
-		status = "okay";
-		compatible = "detectcable";
-		pinctrl-names = "default";
-		pinctrl-0 = <&acokb_irq>;
-		acokb,gpio_detectcable = <&gpa1 7 0>;
-		acokb,wakeup = <1>;
 	};
 
 	pinctrl@13470000 {
@@ -484,6 +469,20 @@
                         samsung,pin-pud = <0>;
                         samsung,pin-val = <0>;
                 };
+		acokb_irq: acokb-irq {
+			samsung,pins = "gpr1-2";
+			samsung,pin-function = <0>;
+			samsung,pin-pud = <0>;
+			samsung,pin-drv = <0>;
+		};
+	};
+
+	detectcable {
+		status = "okay";
+		compatible = "detectcable";
+		pinctrl-names = "default";
+		pinctrl-0 = <&acokb_irq>;
+		acokb,gpio_detectcable = <&gpr1 2 0>;
 	};
 
 	pcie1@157B0000 {

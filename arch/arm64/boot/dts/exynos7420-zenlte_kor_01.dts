@@ -11,24 +11,24 @@
 
 /dts-v1/;
 #include "exynos7420-zenlte_common.dtsi"
-#include "exynos7420-zenlte_eur_battery_09.dtsi"
-#include "exynos7420-zenlte_gpio_kor_09.dtsi"
+#include "exynos7420-zenlte_eur_battery_01.dtsi"
+#include "exynos7420-zenlte_gpio_kor_01.dtsi"
 #include "exynos7420-zenlte_modem-shannon_kor.dtsi"
-#include "exynos7420-zenlte_fingerprint-sensor_04.dtsi"
+#include "exynos7420-zenlte_fingerprint-sensor_00.dtsi"
 #include "exynos7420-zenlte_motor.dtsi"
 #include "exynos7420-zenlte_svcled.dtsi"
 #include "exynos7420-zenlte_mst.dtsi"
 #include "exynos7420-zenlte_kor-tdmb-00.dtsi"
-#include "exynos7420-zenlte_display_03.dtsi"
+#include "exynos7420-zenlte_display_00.dtsi"
 
 / {
-	model = "Samsung ZEN LTE KOR rev0.6 board based on Exynos7420(EVT1), mPOP";
+	model = "Samsung ZEN LTE KOR rev0.1 board based on Exynos7420(EVT1), mPOP";
 	model_info-chip = <7420>;
 	model_info-platform = "android";
 	model_info-subtype = "samsung";
-	model_info-hw_rev = <9>;
-	model_info-hw_rev_end = <255>;
-	compatible = "samsung,ZEN LTE KOR, rev0.6", "samsung,exynos7420";
+	model_info-hw_rev = <1>;
+	model_info-hw_rev_end = <1>;
+	compatible = "samsung,ZEN LTE KOR,rev0.1", "samsung,exynos7420";
 
 	sound {
 		samsung,audio-routing =
@@ -49,6 +49,7 @@
 				"IN3L", "FM In",
 				"IN3R", "FM In";
 
+		drv_strength = <3>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&audio_clk_sel>;
 	};
@@ -290,7 +291,7 @@
 		#size-cells = <0>;
 
 		pinctrl-names = "default";
-		pinctrl-0 = <&spi1_mosi_sck_ssn &spi1_miso &ssp_host_req02>;
+		pinctrl-0 = <&spi1_mosi_sck_ssn &spi1_miso>;
 
 		num-cs = <1>;
 		status = "okay";
@@ -302,11 +303,11 @@
 			spi-cpol;
 			spi-cpha;
 			pinctrl-names = "default";
-			pinctrl-0 = <&ssp_mcu_req &ssp_mcu_resp>;
+			pinctrl-0 = <&ssp_host_req &ssp_mcu_req &ssp_mcu_resp>;
 
 			gpio-controller;
 			#gpio-cells = <2>;
-			ssp-host-req = <&gpa3 4 0x01>;
+			ssp-host-req = <&gpa3 6 0x01>;
 			ssp-mcu-req = <&gpf4 5 0x01>;
 			ssp-mcu-resp = <&gpf4 4 0x00>;
 			ssp-acc-position = <1>;
@@ -427,21 +428,6 @@
 			samsung,pin-con-pdn = <3>;
 			samsung,pin-pud-pdn = <0>;
 		};
-		acokb_irq: acokb-irq {
-			samsung,pins = "gpa1-7";
-			samsung,pin-function = <0>;
-			samsung,pin-pud = <0>;
-			samsung,pin-drv = <0>;
-		};
-	};
-
-	detectcable {
-		status = "okay";
-		compatible = "detectcable";
-		pinctrl-names = "default";
-		pinctrl-0 = <&acokb_irq>;
-		acokb,gpio_detectcable = <&gpa1 7 0>;
-		acokb,wakeup = <1>;
 	};
 
 	pinctrl@13470000 {
@@ -484,6 +470,20 @@
                         samsung,pin-pud = <0>;
                         samsung,pin-val = <0>;
                 };
+		acokb_irq: acokb-irq {
+			samsung,pins = "gpr1-2";
+			samsung,pin-function = <0>;
+			samsung,pin-pud = <0>;
+			samsung,pin-drv = <0>;
+		};
+	};
+
+	detectcable {
+		status = "okay";
+		compatible = "detectcable";
+		pinctrl-names = "default";
+		pinctrl-0 = <&acokb_irq>;
+		acokb,gpio_detectcable = <&gpr1 2 0>;
 	};
 
 	pcie1@157B0000 {
@@ -735,171 +735,19 @@
 
 			regulators {
 				_buck1_reg: s2mpb02-buck1 {
-					regulator-name = "VDD_1P6_DDR";
-					regulator-min-microvolt = <1600000>;
-					regulator-max-microvolt = <1600000>;
-				};
-
-				_buck2_reg: s2mpb02-buck2 {
-					regulator-name = "VDDD_CORE_0.8V_COMP";
-					regulator-min-microvolt = <650000>;
-					regulator-max-microvolt = <850000>;
-				};
-
-				_ldo1_reg: s2mpb02-ldo1 {
-					regulator-name = "VDDD_NORET_0.9V_COMP";
-					regulator-min-microvolt = <900000>;
-					regulator-max-microvolt = <900000>;
-				};
-
-				_ldo2_reg: s2mpb02-ldo2 {
-					regulator-name = "VDDD_CORE_1.0V_COMP";
-					regulator-min-microvolt = <1000000>;
-					regulator-max-microvolt = <1000000>;
-				};
-
-				_ldo3_reg: s2mpb02-ldo3 {
-					regulator-name = "VDDD_1.2V_CAM";
-					regulator-min-microvolt = <1000000>;
-					regulator-max-microvolt = <1200000>;
-				};
-
-				_ldo4_reg: s2mpb02-ldo4 {
-					regulator-name = "VDDD_RET_1.0V_COMP";
-					regulator-min-microvolt = <700000>;
-					regulator-max-microvolt = <1000000>;
-				};
-
-				_ldo5_reg: s2mpb02-ldo5 {
-					regulator-name = "VDDD_1.2V_VT";
-					regulator-min-microvolt = <1200000>;
-					regulator-max-microvolt = <1200000>;
-				};
-
-				_ldo6_reg: s2mpb02-ldo6 {
-					regulator-name = "VDDIO_1.8V_VT";
-					regulator-min-microvolt = <1800000>;
-					regulator-max-microvolt = <1800000>;
-				};
-
-				_ldo7_reg: s2mpb02-ldo7 {
-					regulator-name = "VDDIO_1.8V_CAM";
-					regulator-min-microvolt = <1800000>;
-					regulator-max-microvolt = <1800000>;
-				};
-
-				_ldo8_reg: s2mpb02-ldo8 {
-					regulator-name = "VDDIO_1.8V_COMP";
-					regulator-min-microvolt = <1800000>;
-					regulator-max-microvolt = <1800000>;
-				};
-
-				_ldo9_reg: s2mpb02-ldo9 {
-					regulator-name = "VDDA_1.8V_COMP";
-					regulator-min-microvolt = <1800000>;
-					regulator-max-microvolt = <1800000>;
-				};
-
-				_ldo10_reg: s2mpb02-ldo10 {
-					regulator-name = "VCC_DISPLAY_1.8V";
-					regulator-min-microvolt = <1800000>;
-					regulator-max-microvolt = <1800000>;
-				};
-
-				_ldo11_reg: s2mpb02-ldo11 {
-					regulator-name = "VDDA_2.9V_CAM";
-					regulator-min-microvolt = <2800000>;
-					regulator-max-microvolt = <2950000>;
-				};
-
-				_ldo12_reg: s2mpb02-ldo12 {
-					regulator-name = "VDDAF_2.8V_CAM";
-					regulator-min-microvolt = <2800000>;
-					regulator-max-microvolt = <2800000>;
-				};
-
-				_ldo13_reg: s2mpb02-ldo13 {
-					regulator-name = "VDDA_2.9V_VT";
-					regulator-min-microvolt = <2900000>;
-					regulator-max-microvolt = <2900000>;
-				};
-
-				_ldo14_reg: s2mpb02-ldo14 {
-					regulator-name = "OIS_VM_2.8V";
-					regulator-min-microvolt = <2800000>;
-					regulator-max-microvolt = <2800000>;
-				};
-
-				_ldo15_reg: s2mpb02-ldo15 {
-					regulator-name = "OIS_VDD_2.8V";
-					regulator-min-microvolt = <2800000>;
-					regulator-max-microvolt = <2800000>;
-				};
-
-				_ldo16_reg: s2mpb02-ldo16 {
-					regulator-name = "vtouch_2.8v";
-					regulator-min-microvolt = <2800000>;
-					regulator-max-microvolt = <2800000>;
+					regulator-name = "VDD_PB02_1P3";
+					regulator-min-microvolt = <1300000>;
+					regulator-max-microvolt = <1300000>;
+					regulator-always-on;
 					regulator-boot-on;
-				};
-
-				_ldo17_reg: s2mpb02-ldo17 {
-					regulator-name = "tsp_avdd";
-					regulator-min-microvolt = <3300000>;
-					regulator-max-microvolt = <3300000>;
-				};
-
-				_ldo18_reg: s2mpb02-ldo18 {
-					regulator-name = "ldo18_3.0V";
-					regulator-min-microvolt = <3000000>;
-					regulator-max-microvolt = <3000000>;
-				};
-			};
-
-			torch {
-				status = "okay";
-				leds1 {
-					ledname = "leds-sec1";
-					/* S2MPB02_FLASH_LED_1 */
-					id = <0>;
-					/* S2MPB02_FLASH_CURRENT */
-					brightness = <0xF>;
-					/* S2MPB02_FLASH_TIMEOUT */
-					timeout = <0x3>;
-				};
-
-				leds2 {
-					ledname = "torch-sec1";
-					/* S2MPB02_TORCH_LED_1 */
-					id = <1>;
-					/* S2MPB02_TORCH_CURRENT */
-					brightness = <0x9>;
-					/* S2MPB02_TORCH_TIMEOUT */
-					timeout = <0xF>;
 				};
 			};
 		};
 	};
 
-	sub_ldo_18_en {
-		compatible = "regulator-fixed";
-		regulator-name = "VCC_3.0V_LCD";
-		regulator-min-microvolt = <3000000>;
-		regulator-max-microvolt = <3000000>;
-		gpio = <&gpd1 4 0>;
-		enable-active-high;
-		regulator-boot-on;
-	};
-
-	hsi2c@13690000 {
-		status = "okay";
-
-		/delete-node/ max77838@60;
-	};
-
 	/delete-node/ i2c@28;
 
-	i2c@20 {
+	hsi2c@14E70000 {
 		touchkey@20 {
 			abov,sub-det = <&gpa3 0 0>;
 		};
